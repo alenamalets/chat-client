@@ -1,26 +1,54 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {connect} from 'react-redux'
+import {sendMessage} from './action'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state={
+    name: '',
+    body: ''
+  }
+  onChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  onSend = () => {
+    this.props.sendMessage(this.state)
+    this.setState({
+      name: '',
+      body: ''
+    })
+  }
+
+  render () {
+    // console.log('this.props.messages test:', this.props.messages)
+    const paragraphs = this.props.messages.map((mes, index) => <p key={index}>{mes.name} said : {mes.body}</p>)
+    return (
+      <main>
+        <h1>Messages:</h1>
+        {paragraphs}
+        <label>
+               Name:
+        <input type='text' onChange={this.onChange} name ='name' value={this.state.name}/>
+        </label>
+        <label>
+               Comment:
+        <input type='text' onChange={this.onChange} name ='body' value={this.state.body}/>
+        </label>
+        <button onClick={this.onSend}>send</button>
+      </main>
+    )
+  }
+ 
 }
 
-export default App;
+function mapStateToProps (state) {
+  return {
+    messages: state.messages,
+    sent: state.sent
+  }
+}
+
+export default connect(mapStateToProps, {sendMessage}) (App);
